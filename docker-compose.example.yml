@@ -1,0 +1,31 @@
+version: "3"
+services:
+    cf-ddns:
+        container_name: cf-ddns
+        image: cf-ddns
+        build:
+            context: .
+            dockerfile: Dockerfile
+        pull_policy: never
+        restart: unless-stopped
+        dns:
+            - 1.1.1.1
+            - 1.0.0.1
+        environment:
+            # Go to https://dash.cloudflare.com/profile/api-tokens and create a
+            # new token with the "Zone.DNS" (edit + read) permission
+            API_KEY:
+            DOMAIN:
+            SUBDOMAIN:
+            # If true, set "GET_CURR_IP_METHOD" to "CF" to use the Cloudflare
+            # API to get the current IP address configured in the DNS record
+            PROXY: false
+
+            # If use "NSLOOKUP", recommend setting "SLEEP_INTERVAL" to a value
+            # equal or greater than 5 minutes since it can take up to 5 minutes
+            # for the DNS record to propagate. Using "CF" doesn't have this
+            # limitation since we're querying the Cloudflare API directly.
+            GET_CURR_IP_METHOD: NSLOOKUP
+            SLEEP_INTERVAL: 5m
+
+            LOG_LEVEL: info
